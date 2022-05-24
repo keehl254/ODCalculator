@@ -1,0 +1,10 @@
+@keyframes bake-pie {
+  from {
+    transform: rotate(0deg) translate3d(0, 0, 0); } 
+}
+
+#wrapper {
+    margin-left: auto;
+    margin-right: auto;
+    width: 1200px;
+}

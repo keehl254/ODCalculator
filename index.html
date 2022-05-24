@@ -1,0 +1,237 @@
+<html>
+    <head>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script src="script.js"></script>
+        <script>
+            function fixPercent(percent) {
+                return Math.round((percent + Number.EPSILON) * 10000) / 100
+            }
+
+            function grabPercentage(total, loyalty) {
+                return fixPercent(loyalty / total);
+            }
+            
+            function generateTable(data) {
+            	var rows = data.split(/\n{2}(?!\t)/);
+
+                console.log(rows[0]);
+
+            	var table = $('<table />');
+
+            	var signups = 0;
+            	var transactions = 0;
+            	var loyalty = 0;
+
+            	for(var y in rows) {
+                	var cells = rows[y].split("\t");
+                	if(cells[0] == "1111")
+                    	continue;
+                	transactions += parseInt(cells[1]);
+                	loyalty += parseInt(cells[2]);
+                	signups += parseInt(cells[4]);
+            	}
+
+                var percentage = grabPercentage(transactions,loyalty);
+                var originalPercentage = percentage;
+            	var originalTransactionCount = transactions;
+                
+                while(percentage < 60) {
+                	transactions++;
+                	loyalty++;
+                	percentage = grabPercentage(transactions,loyalty);
+            	}
+                table.append('<tr><th>Percentage</th><th>Transactions needed to reach goal</th></tr>');
+                table.append('<tr><td>' + originalPercentage + '%</td><td>' + (transactions - originalTransactionCount) + '</td></tr>');
+                
+            	$('#result_table').html(table);
+            }
+
+            function findRequiredTilGoal(transactions, loyaltyTransactions) {
+                var percent = loyaltyTransactions/transactions;
+                if(percent > 0.6)
+                    return 0;
+                var count = 0;
+                while(percent < 0.6) {
+                    transactions++;
+                    loyaltyTransactions++;
+                    count++;
+                    percent = loyaltyTransactions/transactions;
+                }
+                return count;
+            }
+
+            function formatTable(data,totals) {
+                $("#excel_table").html("<table cellpadding='0' cellspacing='0' border='0' bgcolor='white' style='border-collapse: collapse;width:600px'><tbody></tbody></table>");
+
+                if(totals == null) {
+                    totals = ["Totals",0,0,0,0,0,0,0,0];
+                }
+
+                var table = $("#excel_table");
+                var tbody = $(table).find("table tbody");
+
+                var headerRow = $("<tr />");
+                var cols = [["Cashier",4],["Transactions",4],["REW Transactions",1],["Penetration",1], ["Signups",1], ["Signup Rate",1], ["Needed for 5%",1], ["Needed for 10%",1],["Needed for goal",1]];
+                for(var col of cols)
+                    headerRow.append("<td colspan='"+col[1]+"' class='excel_td excel_header'><p><span>"+col[0]+"</span></p></td><td class='excel_td excel_header'></td>");
+                headerRow.children().last().remove();
+                tbody.prepend(headerRow);
+
+                var blankRow = ["","","","","","","","",""];
+                var totalIndex = Math.max(data.length,20);
+                for(var i=0;i<=totalIndex;i++) {
+                    var row,rowClass;
+                    if(i == totalIndex)
+                        row = totals;
+                    else {
+                        if(i < data.length)
+                            row = data[i];
+                        else
+                            row = blankRow;
+                        if(i % 2 == 1)
+                            rowClass = "excel_td excel_mod";
+                        else
+                            rowClass = "excel_td";
+                    }
+                    var rowTD = $("<tr valign='top' />");
+                    for(var col=0;col<9;col++)
+                        rowTD.append("<td colspan='"+cols[col][1]+"' class='"+rowClass+"'><p><span>"+row[col]+"</span></p></td><td><div style='width: 5px; height: 20px;'></div></td>");
+                    rowTD.children().last().remove();
+                    if(i == totalIndex)
+                        rowTD.children().addClass("excel_header");
+                    else if(i >= data.length)
+                        rowTD.children().addClass("excel_blank");
+                    tbody.append(rowTD);
+                }
+
+
+            }
+            
+        </script>
+        <link rel="stylesheet" type="text/css" href="style.css">
+        <link rel="stylesheet" type="text/css" media="screen" href="nonPrintStyle.css" />
+        <link rel="stlesheet" type="text/css" media="print" href="printStyle.css" />
+    </head>
+    <body>
+        <div id="ribbon" style="background-color: #B5120F;width:100%;height:50px;margin-top:50px;">
+            <center><h1 style="color:#FFFFFF;line-height:50px;">Loyalty Rewards Calculator</h1></center>
+        </div>
+        <div id="wrapper">
+            <div style="float:left;width:600px;">
+                <div id="excel_table" contenteditable = true><table cellpadding="0" cellspacing="0" border="0" bgcolor="white" style="border-collapse: collapse;width:600px"><tbody></tbody></table></div><br>
+            </div>
+            <div style="float:right;width: calc(100% - 750px);">
+                <div class="pie-charts">
+                    <div class="pieID--penetration pie-chart--wrapper">
+                      <h2>Penetration</h2>
+                      <div class="pie-chart">
+                        <div class="pie-chart__pie"></div>
+                        <h3 class="pie-chart-percent" id="penetration_percent">100%</h3>
+                      </div>
+                    </div>
+
+                    <div class="pieID--signup-rate pie-chart--wrapper">
+                      <h2>New Signup Rate</h2>
+                      <div class="pie-chart">
+                        <div class="pie-chart__pie"></div>
+                        <h3 class="pie-chart-percent" id="signup-rate-percent">100%</h3>
+                      </div>
+                    </div>
+                </div>
+                <div id="result_table" class="center"></div>
+            </div>
+        </div>
+        <script>
+
+            var graphColors = [
+                ["#5CDC6F","#D5F6DB"],
+                ["#FFFF00","#FFC000"],
+                ["#00b050","#22ff00"]
+            ]
+
+            formatTable([]);
+            var textbox = document.getElementById("excel_table");
+          
+            textbox.onpaste = function(event) {
+                $("#excel_table").html("");
+                setTimeout(function() {
+                    $("#excel_table").blur();
+                    var data = $("#excel_table");
+                    var tbody = $(data).find("table tbody");
+
+
+
+                    var data = [];
+
+                    tbody.children().each(function (index) {
+                        var row = [];
+                        $(this).children().each(function(i) {
+                            if((i % 2) == 0)
+                                row[i/2] = parseInt($(this,"p").text());
+                        });
+
+                        row[5] = fixPercent(row[4] / row[1]); // New Signup Rate
+                        row[6] = Math.ceil(fixPercent(Math.max((row[1]*0.05) - row[4],0))/100); // Percentage of signups needed for 5%
+                        row[7] = Math.ceil(fixPercent(Math.max((row[1]*0.1) - row[4],0))/100); // Percentage of signups needed for 10%
+                        row[8] = findRequiredTilGoal(row[1],row[2]);
+
+                        if(!isNaN(row[0]) && row[0] != 1111)
+                            data[data.length] = row;
+                        else
+                            $(this).remove();
+                    });
+
+                    var totalTransactions = 0;
+                    var loyaltyTransactions = 0;
+                    var signupTransactions = 0;
+
+                    for(i=0;i<data.length;i++) {
+                        totalTransactions += data[i][1];
+                        loyaltyTransactions += data[i][2];
+                        signupTransactions += data[i][4];
+                    }
+
+                    var storePenetration = grabPercentage(totalTransactions,loyaltyTransactions);
+                    var storeSignupRate = fixPercent(signupTransactions / totalTransactions);
+                    var storeNeededFive = Math.ceil(fixPercent(Math.max((totalTransactions*0.05) - signupTransactions,0))/100);
+                    var storeNeededTen = Math.ceil(fixPercent(Math.max((totalTransactions*0.1) - signupTransactions,0))/100);
+                    var transactionsForGoal = findRequiredTilGoal(totalTransactions, loyaltyTransactions);
+
+                    var totals = ["Totals",totalTransactions,loyaltyTransactions, storePenetration, signupTransactions, storeSignupRate,storeNeededFive,storeNeededTen, transactionsForGoal];
+
+                    var graphColor;
+                    if(storePenetration < 55)
+                        graphColor = 0;
+                    else if(storePenetration < 60)
+                        graphColor = 1;
+                    else
+                        graphColor = 2;
+                    $("#penetration_percent").text(storePenetration+"%");
+                    createPercentagePie(storePenetration,'.pieID--penetration',graphColors[graphColor][0], graphColors[graphColor][1] );
+
+                    if(storeSignupRate < 5)
+                        graphColor = 0;
+                    else if(storeSignupRate < 10)
+                        graphColor = 1;
+                    else
+                        graphColor = 2;
+                    $("#signup-rate-percent").text(storeSignupRate+"%");
+                    createPercentagePie(storeSignupRate,'.pieID--signup-rate',graphColors[graphColor][0], graphColors[graphColor][1] );
+
+                    formatTable(data,totals);
+
+
+                },1)
+            };
+
+            textbox.onclick = function(event) {
+                $("#excel_table").html("<table cellpadding='0' cellspacing='0' border='0' bgcolor='white' style='border-collapse: collapse;width:600px'><tbody></tbody></table>");
+                formatTable([]);
+            }
+
+
+
+            createPieCharts();
+        </script>
+    </body>
+</html>
