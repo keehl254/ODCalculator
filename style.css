@@ -45,6 +45,7 @@
 .excel_td p {
     overflow:hidden;
     text-indent:0px
+    margin: 0;
 }
 
 .excel_td span {
