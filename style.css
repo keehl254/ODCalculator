@@ -44,7 +44,7 @@
 
 .excel_td p {
     overflow:hidden;
-    text-indent:0px
+    text-indent:0px;
     margin: 0;
 }
 
@@ -54,12 +54,6 @@
     font-size: 12px;
     line-height: 1.16406;
     font-weight: bold;
-}
-
-.excel_blank::after {
-  content:" ";
-  font-size:0;
-  white-space:pre;
 }
   
 .pie-chart {
