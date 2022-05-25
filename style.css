@@ -15,12 +15,12 @@
     border-collapse:collapse;
     margin-left: auto;
     margin-right: auto;
+    width: 100%;
+    margin-top: -65px;
 }
 
 #result_table * {
-    border:1px solid #000000;
     text-align: center;
-    padding : 15px;
 }
 
 [contenteditable] {
