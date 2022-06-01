@@ -140,6 +140,7 @@
 
             formatTable([]);
             var textbox = document.getElementById("excel_table");
+            var offset = new Date().getTimezoneOffset()*60*1000;
 
             function readData(table) {
                 var tbody = $(table).find("table tbody");
@@ -218,6 +219,13 @@
 
                 formatTable(data,totals);
             }
+
+            function setToSunday(date) {
+                var day = date.getDay() || 7;  
+                if(day !== 0) 
+                    date.setHours(-24 * day); 
+                return date;
+            }
           
             textbox.onpaste = function(event) {
                 $("#excel_table").html("");
@@ -233,13 +241,35 @@
             }
 
             $("#load_today").click(function() {
-                var date = new Date().toISOString().split("T")[0];
-                var startOfDay = new Date(date).getTime();
-                var endOfDay = startOfDay + (86400 * 1000);
-                window.open("ods06626w10:7001/odpposservlet/ODOpenReport?report=odr&start_date="+startOfDay+"&end_date="+endOfDay+"&precision=2");
+                var date = new Date();
 
-                $.get( "ODOpenReport.htm", function( data ) {
-                    console.log(data);     
+                date.setUTCHours(0,0,0,0);
+                var startOfDay = date.getTime() + offset;
+
+                date.setUTCHours(23,59,59,999);
+                var endOfDay = date.getTime() + offset;
+
+                var url = "ods06626w10:7001/odpposservlet/ODOpenReport?report=odr&start_date="+startOfDay+"&end_date="+endOfDay+"&precision=2";
+                window.open(url);
+
+                $.get(url, function( data ) {
+                    readData($(data));
+                });
+
+            });
+
+            $("#load_wtd").click(function() {
+                var date = setToSunday(new Date());
+                var startOfWeek = new Date(date.toISOString().split("T")[0]).getTime() + offset;
+                var endOfWeek = startOfWeek + (604800 * 1000) + offset;
+
+
+
+                var url = "ods06626w10:7001/odpposservlet/ODOpenReport?report=odr&start_date="+startOfWeek+"&end_date="+endOfWeek+"&precision=2";
+                window.open(url);
+
+                $.get(url, function( data ) {
+                    readData($(data));
                 });
 
             });
