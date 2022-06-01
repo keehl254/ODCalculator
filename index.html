@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script src="jquery.min.js"></script>
         <script src="script.js"></script>
         <script>
             var graphColors = [
@@ -107,6 +107,8 @@
         <link rel="stlesheet" type="text/css" media="print" href="printStyle.css" />
     </head>
     <body>
+        <input type="button" class="load_button" value="Load Today" id="load_today" \>
+        <input type="button" class="load_button" value="Load WTD" id="load_wtd" \>
         <div id="ribbon" style="background-color: #B5120F;width:100%;height:50px;margin-top:50px;">
             <center><h1 style="color:#FFFFFF;line-height:50px;">Loyalty Rewards Calculator</h1></center>
         </div>
@@ -138,95 +140,109 @@
 
             formatTable([]);
             var textbox = document.getElementById("excel_table");
+
+            function readData(table) {
+                var tbody = $(table).find("table tbody");
+
+                var data = [];
+
+                tbody.children().each(function (index) {
+                    var associateRow = [];
+                    $(this).children().each(function(i) {
+                        if((i % 2) == 0)
+                            associateRow[i/2] = parseInt($(this,"p").text());
+                    });
+
+                    var transactionCountWOSignups = (associateRow[1]-associateRow[2]+associateRow[4]);
+
+                    associateRow[5] = fixPercent(associateRow[4] / transactionCountWOSignups); // New Signup Rate
+                    associateRow[6] = Math.ceil(fixPercent(Math.max((transactionCountWOSignups*0.05) - associateRow[4],0))/100); // Percentage of signups needed for 5%
+                    associateRow[7] = Math.ceil(fixPercent(Math.max((transactionCountWOSignups*0.1) - associateRow[4],0))/100); // Percentage of signups needed for 10%
+                    associateRow[8] = findRequiredTilGoal(associateRow[1],associateRow[2]);
+
+
+                    if(isNaN(associateRow[5]))
+                        associateRow[5] = "-";
+
+                    if(!isNaN(associateRow[0]) && associateRow[0] != 1111)
+                        data[data.length] = associateRow;
+                    else
+                        $(this).remove();
+                });
+
+                var totalTransactions = 0;
+                var loyaltyTransactions = 0;
+                var signupTransactions = 0;
+
+                for(i=0;i<data.length;i++) {
+                    totalTransactions += data[i][1];
+                    loyaltyTransactions += data[i][2];
+                    signupTransactions += data[i][4];
+                }
+
+                for(i=0;i<data.length;i++)
+                    scoreAssociate(totalTransactions, data[i]);
+
+                var transactionCountWOSignups = (totalTransactions-loyaltyTransactions+signupTransactions);
+
+                var storePenetration = fixPercent(loyaltyTransactions/totalTransactions);
+                var storeSignupRate = fixPercent(signupTransactions / transactionCountWOSignups);
+                var storeNeededFive = Math.ceil(fixPercent(Math.max((transactionCountWOSignups*0.05) - signupTransactions,0))/100);
+                var storeNeededTen = Math.ceil(fixPercent(Math.max((transactionCountWOSignups*0.1) - signupTransactions,0))/100);
+                var transactionsForGoal = findRequiredTilGoal(totalTransactions, loyaltyTransactions);
+
+                var totals = ["Totals",totalTransactions,loyaltyTransactions, storePenetration, signupTransactions, storeSignupRate,storeNeededFive,storeNeededTen, transactionsForGoal];
+
+                var graphColor;
+                if(storePenetration < 55)
+                    graphColor = 0;
+                else if(storePenetration < 60)
+                    graphColor = 1;
+                else
+                    graphColor = 2;
+                $("#penetration_percent").text(storePenetration+"%");
+                createPercentagePie(storePenetration,'.pieID--penetration',graphColors[graphColor][0], graphColors[graphColor][1] );
+
+                if(storeSignupRate < 5)
+                    graphColor = 0;
+                else if(storeSignupRate < 10)
+                    graphColor = 1;
+                else
+                    graphColor = 2;
+                $("#signup-rate-percent").text(storeSignupRate+"%");
+                createPercentagePie(storeSignupRate,'.pieID--signup-rate',graphColors[graphColor][0], graphColors[graphColor][1] );
+
+                data.sort(function(associateOne, associateTwo) {
+                    return associateTwo[9]-associateOne[9];
+                });
+
+                formatTable(data,totals);
+            }
           
             textbox.onpaste = function(event) {
                 $("#excel_table").html("");
                 setTimeout(function() {
                     $("#excel_table").blur();
                     var data = $("#excel_table");
-                    var tbody = $(data).find("table tbody");
-
-                    var data = [];
-
-                    tbody.children().each(function (index) {
-                        var associateRow = [];
-                        $(this).children().each(function(i) {
-                            if((i % 2) == 0)
-                                associateRow[i/2] = parseInt($(this,"p").text());
-                        });
-
-                        var transactionCountWOSignups = (associateRow[1]-associateRow[2]+associateRow[4]);
-
-                        associateRow[5] = fixPercent(associateRow[4] / transactionCountWOSignups); // New Signup Rate
-                        associateRow[6] = Math.ceil(fixPercent(Math.max((transactionCountWOSignups*0.05) - associateRow[4],0))/100); // Percentage of signups needed for 5%
-                        associateRow[7] = Math.ceil(fixPercent(Math.max((transactionCountWOSignups*0.1) - associateRow[4],0))/100); // Percentage of signups needed for 10%
-                        associateRow[8] = findRequiredTilGoal(associateRow[1],associateRow[2]);
-
-
-                        if(isNaN(associateRow[5]))
-                            associateRow[5] = "-";
-
-                        if(!isNaN(associateRow[0]) && associateRow[0] != 1111)
-                            data[data.length] = associateRow;
-                        else
-                            $(this).remove();
-                    });
-
-                    var totalTransactions = 0;
-                    var loyaltyTransactions = 0;
-                    var signupTransactions = 0;
-
-                    for(i=0;i<data.length;i++) {
-                        totalTransactions += data[i][1];
-                        loyaltyTransactions += data[i][2];
-                        signupTransactions += data[i][4];
-                    }
-
-                    for(i=0;i<data.length;i++)
-                        scoreAssociate(totalTransactions, data[i]);
-
-                    var transactionCountWOSignups = (totalTransactions-loyaltyTransactions+signupTransactions);
-
-                    var storePenetration = fixPercent(loyaltyTransactions/totalTransactions);
-                    var storeSignupRate = fixPercent(signupTransactions / transactionCountWOSignups);
-                    var storeNeededFive = Math.ceil(fixPercent(Math.max((transactionCountWOSignups*0.05) - signupTransactions,0))/100);
-                    var storeNeededTen = Math.ceil(fixPercent(Math.max((transactionCountWOSignups*0.1) - signupTransactions,0))/100);
-                    var transactionsForGoal = findRequiredTilGoal(totalTransactions, loyaltyTransactions);
-
-                    var totals = ["Totals",totalTransactions,loyaltyTransactions, storePenetration, signupTransactions, storeSignupRate,storeNeededFive,storeNeededTen, transactionsForGoal];
-
-                    var graphColor;
-                    if(storePenetration < 55)
-                        graphColor = 0;
-                    else if(storePenetration < 60)
-                        graphColor = 1;
-                    else
-                        graphColor = 2;
-                    $("#penetration_percent").text(storePenetration+"%");
-                    createPercentagePie(storePenetration,'.pieID--penetration',graphColors[graphColor][0], graphColors[graphColor][1] );
-
-                    if(storeSignupRate < 5)
-                        graphColor = 0;
-                    else if(storeSignupRate < 10)
-                        graphColor = 1;
-                    else
-                        graphColor = 2;
-                    $("#signup-rate-percent").text(storeSignupRate+"%");
-                    createPercentagePie(storeSignupRate,'.pieID--signup-rate',graphColors[graphColor][0], graphColors[graphColor][1] );
-
-                    data.sort(function(associateOne, associateTwo) {
-                        return associateTwo[9]-associateOne[9];
-                    });
-
-                    formatTable(data,totals);
-
-
+                    readData(data);
                 },1)
             };
 
             textbox.onclick = function(event) {
                 formatTable([]);
             }
+
+            $("#load_today").click(function() {
+                var date = new Date().toISOString().split("T")[0];
+                var startOfDay = new Date(date).getTime();
+                var endOfDay = startOfDay + (86400 * 1000);
+                window.open("ods06626w10:7001/odpposservlet/ODOpenReport?report=odr&start_date="+startOfDay+"&end_date="+endOfDay+"&precision=2");
+
+                $.get( "ODOpenReport.htm", function( data ) {
+                    console.log(data);     
+                });
+
+            });
 
             createPieCharts();
         </script>

@@ -136,8 +136,19 @@
     float: right; }
 
 .pie-charts {
-  display: flex;
-  flex-direction: row; }
-  @media () {
+    display: flex;
+    flex-direction: row; 
+}
+@media () {
     .pie-charts {
-      flex-direction: column; } }
+        flex-direction: column;
+    }
+}
+
+@media print {
+    .load_button {
+        visibility: hidden;
+        display: none;
+    }
+}
+
