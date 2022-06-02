@@ -54,9 +54,9 @@
                 var tbody = $(table).find("table tbody");
 
                 var headerRow = $("<tr />");
-                var cols = [["Cashier",4,-1],["Transactions",4,-1],["REW Transactions",1,-1],["Penetration",1,55,60], ["Signups",1,-1], ["Signup Rate",1,5,10], ["Needed for 5%",1,-1], ["Needed for 10%",1,-1],["Needed for goal",1,-1]];
+                var cols = [["Cashier",0,4,-1],["Transactions",1,4,-1],["REW Transactions",2,1,-1],["",-1,1,-1],["Penetration",3,1,55,60], ["Needed for goal",8,1,-1],["",-1,1,-1], ["Signups",4,1,-1], ["Signup Rate",5,1,5,10], ["Needed for 5%",6,1,-1], ["Needed for 10%",7,1,-1]];
                 for(var col of cols)
-                    headerRow.append("<td colspan='"+col[1]+"' class='excel_td excel_header'><p><span>"+col[0]+"</span></p></td><td class='excel_td excel_header'></td>");
+                    headerRow.append("<td colspan='"+col[2]+"' class='excel_td excel_header'><p><span>"+col[0]+"</span></p></td><td class='excel_td excel_header'></td>");
                 headerRow.children().last().remove();
                 tbody.prepend(headerRow);
 
@@ -76,20 +76,24 @@
                         else
                             rowClass = "excel_td";
                     }
+                    row[-1] = "";
                     var rowTD = $("<tr valign='top' />");
-                    for(var col=0;col<9;col++) {
+                    for(var col=0;col<cols.length;col++) {
                         var style ="";
                         var backgroundColor;
-                        if(cols[col][2] != -1 && i < data.length) {
-                            if(row[col] < cols[col][2])
+                        var tempRowClass = rowClass;
+                        if(cols[col][1] == -1) {
+                            tempRowClass="";
+                        } else if(cols[col][3] != -1 && i < data.length) {
+                            if(row[cols[col][1]] < cols[col][3])
                                 backgroundColor = 0;
-                            else if(row[col] < cols[col][3])
+                            else if(row[cols[col][1]] < cols[col][4])
                                 backgroundColor = 1;
                             else
                                 backgroundColor = 2;
                             style = "background-color: "+graphColors[backgroundColor][0]+";";
                         }
-                        rowTD.append("<td colspan='"+cols[col][1]+"' class='"+rowClass+"' style='"+style+"'><p><span>"+row[col]+"</span></p></td><td><div style='width: 5px; height: 20px;'></div></td>");
+                        rowTD.append("<td colspan='"+cols[col][2]+"' class='"+tempRowClass+"' style='"+style+"'><p><span>"+row[cols[col][1]]+"</span></p></td><td><div style='width: 5px; height: 20px;'></div></td>");
                     }
                     rowTD.children().last().remove();
                     if(i == totalIndex)
@@ -107,10 +111,13 @@
         <link rel="stlesheet" type="text/css" media="print" href="printStyle.css" />
     </head>
     <body>
-        <input type="button" class="load_button" value="Load Today" id="load_today" \>
-        <input type="button" class="load_button" value="Load WTD" id="load_wtd" \>
         <div id="ribbon" style="background-color: #B5120F;width:100%;height:50px;margin-top:50px;">
-            <center><h1 style="color:#FFFFFF;line-height:50px;">Loyalty Rewards Calculator</h1></center>
+            <div style="float:left;position:absolute;">
+                <input type="button" class="load_button" value="Open Today" id="load_today" \><input type="button" class="load_button" value="Open WTD" id="load_wtd" \>
+            </div>
+            <div>
+                <h1 style="color:#FFFFFF;line-height:50px;text-align: -webkit-center;">Loyalty Rewards Calculator</h1>
+            </div>
         </div>
         <div id="wrapper">
             <div style="float:left;">
@@ -243,35 +250,25 @@
             $("#load_today").click(function() {
                 var date = new Date();
 
-                date.setUTCHours(0,0,0,0);
-                var startOfDay = date.getTime() + offset;
+                date.setHours(0,0,0,0);
+                var startOfDay = date.getTime();
 
-                date.setUTCHours(23,59,59,999);
-                var endOfDay = date.getTime() + offset;
+                date.setHours(23,59,59,999);
+                var endOfDay = date.getTime();
 
-                var url = "ods06626w10:7001/odpposservlet/ODOpenReport?report=odr&start_date="+startOfDay+"&end_date="+endOfDay+"&precision=2";
+                var url = "http://ods06626w10:7001/odpposservlet/ODOpenReport?report=odr&start_date="+startOfDay+"&end_date="+endOfDay+"&precision=2";
                 window.open(url);
-
-                $.get(url, function( data ) {
-                    readData($(data));
-                });
-
             });
 
             $("#load_wtd").click(function() {
                 var date = setToSunday(new Date());
-                var startOfWeek = new Date(date.toISOString().split("T")[0]).getTime() + offset;
-                var endOfWeek = startOfWeek + (604800 * 1000) + offset;
+                var startOfWeek = new Date(date.toISOString().split("T")[0]).getTime();
+                var endOfWeek = startOfWeek + (604800 * 1000);
 
 
 
-                var url = "ods06626w10:7001/odpposservlet/ODOpenReport?report=odr&start_date="+startOfWeek+"&end_date="+endOfWeek+"&precision=2";
+                var url = "http://ods06626w10:7001/odpposservlet/ODOpenReport?report=odr&start_date="+startOfWeek+"&end_date="+endOfWeek+"&precision=2";
                 window.open(url);
-
-                $.get(url, function( data ) {
-                    readData($(data));
-                });
-
             });
 
             createPieCharts();
