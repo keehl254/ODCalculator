@@ -9,6 +9,11 @@
     width: 1200px;
 }
 
+#ribbon {
+    margin-top: 50px;
+    top: 0px;
+}
+
 .load_button {
   background-color: #B5120F;
   border: 1px solid #B5120F;

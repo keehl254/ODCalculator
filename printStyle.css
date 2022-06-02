@@ -3,3 +3,8 @@
     margin-right: auto;
     width: 50%;
 }
+
+#ribbon {
+    margin-top: 0px;
+    top: -20px;
+}
