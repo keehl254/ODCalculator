@@ -22,7 +22,8 @@
                 995244: "995244<br><as>(Annie)</as>",
                 979224: "979224<br><as>(Lane)</as>",
                 1016526: "1016526<br><as>(Melvin)</as>",
-                1009557: "1009557<br><as>(Aurellia)</as>"
+                1009557: "1009557<br><as>(Aurellia)</as>",
+                1111: "1111<br><as>(Self Serve)</as>"
             }
 
             function fixPercent(percent) {
@@ -194,7 +195,7 @@
                     if(isNaN(associateRow[5]))
                         associateRow[5] = "-";
 
-                    if(!isNaN(associateRow[0]) && associateRow[0] != 1111) {
+                    if(!isNaN(associateRow[0])) { // && associateRow[0] != 1111
                         var associateName = associates[associateRow[0]];
                         if(associateName != null)
                             associateRow[0] = associateName;
