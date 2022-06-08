@@ -46,8 +46,7 @@
 
             function scoreAssociate(totalTransactions, associateRow) {
                 if(associateRow[0] == 1111) {
-                    associateRow[9] = 9999;
-                    return;
+                    return 0;
                 }
                 var points = 0;
                 points += associateRow[8] * 0.2;
@@ -60,8 +59,8 @@
                 if(associateRow[4] > 0 && associateRow[3] == 100)
                     points-=5;*/
 
-                associateRow[9] = 100-points;
                 console.log(associateRow[0]+": "+associateRow[9])
+                return 100-points;
             }
 
             function formatTable(data,totals) {
@@ -232,7 +231,7 @@
                 }
 
                 for(i=0;i<data.length;i++)
-                    scoreAssociate(totalTransactions, data[i]);
+                    data[i][9] = scoreAssociate(totalTransactions, data[i]);
 
                 var transactionCountWOSignups = (totalTransactionsWOSS-loyaltyTransactions+signupTransactions);
 
