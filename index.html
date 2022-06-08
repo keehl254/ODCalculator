@@ -59,11 +59,15 @@
                 if(associateRow[4] > 0 && associateRow[3] == 100)
                     points-=5;*/
 
-                console.log(associateRow[0]+": "+associateRow[9])
+                console.log(associateRow[0]+": "+(100-points))
                 return 100-points;
             }
 
             function formatTable(data,totals) {
+                data = data.sort(function(associateOne, associateTwo) {
+                    return associateTwo[9] + associateOne[9];
+                });
+                
                 $("#excel_table").html("<table cellpadding='0' cellspacing='0' border='0' bgcolor='white' style='border-collapse: collapse;width:600px'><tbody></tbody></table>");
 
                 if(totals == null)
@@ -261,10 +265,6 @@
                     graphColor = 2;
                 $("#signup-rate-percent").text(storeSignupRate+"%");
                 createPercentagePie(storeSignupRate,'.pieID--signup-rate',graphColors[graphColor][0], graphColors[graphColor][1] );
-
-                data.sort(function(associateOne, associateTwo) {
-                    return associateTwo[9]-associateOne[9];
-                });
 
                 formatTable(data,totals);
             }
