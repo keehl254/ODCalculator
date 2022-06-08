@@ -45,6 +45,8 @@
             }
 
             function scoreAssociate(totalTransactions, associateRow) {
+                if(associateRow[0] == 1111)
+                    return -1;
                 var points = 0;
                 points += associateRow[8] * 0.2;
                 points += associateRow[7] * 2;
@@ -194,6 +196,13 @@
 
                     if(isNaN(associateRow[5]))
                         associateRow[5] = "-";
+                    
+                    if(associateRow[0] == 1111) {
+                        associateRow[5] = "-";
+                        associateRow[6] = "-";
+                        associateRow[7] = "-";
+                        associateRow[8] = "-";
+                    }
 
                     if(!isNaN(associateRow[0])) { // && associateRow[0] != 1111
                         var associateName = associates[associateRow[0]];
@@ -205,6 +214,7 @@
                 });
 
                 var totalTransactions = 0;
+                var totalTransactionsWOSS = 0; //Total transactions without self serve
                 var loyaltyTransactions = 0;
                 var signupTransactions = 0;
 
@@ -212,18 +222,21 @@
                     totalTransactions += data[i][1];
                     loyaltyTransactions += data[i][2];
                     signupTransactions += data[i][4];
+                    
+                    if(data[i][0] != 1111)
+                        totalTransactionsWOSS += data[i][1];
                 }
 
                 for(i=0;i<data.length;i++)
                     scoreAssociate(totalTransactions, data[i]);
 
-                var transactionCountWOSignups = (totalTransactions-loyaltyTransactions+signupTransactions);
+                var transactionCountWOSignups = (totalTransactionsWOSS-loyaltyTransactions+signupTransactions);
 
                 var storePenetration = fixPercent(loyaltyTransactions/totalTransactions);
                 var storeSignupRate = fixPercent(signupTransactions / transactionCountWOSignups);
                 var storeNeededFive = Math.ceil(fixPercent(Math.max((transactionCountWOSignups*0.05) - signupTransactions,0))/100);
                 var storeNeededTen = Math.ceil(fixPercent(Math.max((transactionCountWOSignups*0.1) - signupTransactions,0))/100);
-                var transactionsForGoal = findRequiredTilGoal(totalTransactions, loyaltyTransactions);
+                var transactionsForGoal = findRequiredTilGoal(totalTransactionsWOSS, loyaltyTransactions);
 
                 var totals = ["Totals",totalTransactions,loyaltyTransactions, storePenetration, signupTransactions, storeSignupRate,storeNeededFive,storeNeededTen, transactionsForGoal];
 
