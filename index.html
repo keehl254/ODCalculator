@@ -46,7 +46,7 @@
 
             function scoreAssociate(totalTransactions, associateRow) {
                 if(associateRow[0] == 1111)
-                    return -1;
+                    return 9999;
                 var points = 0;
                 points += associateRow[8] * 0.2;
                 points += associateRow[7] * 2;
@@ -111,6 +111,8 @@
                                 backgroundColor = 2;
                             style = "background-color: "+graphColors[backgroundColor][0]+";";
                         }
+                        if(row[cols[col][1]] == 0)
+                            row[cols[col][1]] = "-";
                         rowTD.append("<td colspan='"+cols[col][2]+"' class='"+tempRowClass+"' style='"+style+"'><p><span>"+row[cols[col][1]]+"</span></p></td><td><div style='width: 5px; height: 20px;'></div></td>");
                     }
                     rowTD.children().last().remove();
