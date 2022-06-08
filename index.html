@@ -45,8 +45,10 @@
             }
 
             function scoreAssociate(totalTransactions, associateRow) {
-                if(associateRow[0] == 1111)
-                    return 9999;
+                if(associateRow[0] == 1111) {
+                    associateRow[9] = 9999;
+                    return;
+                }
                 var points = 0;
                 points += associateRow[8] * 0.2;
                 points += associateRow[7] * 2;
@@ -111,8 +113,6 @@
                                 backgroundColor = 2;
                             style = "background-color: "+graphColors[backgroundColor][0]+";";
                         }
-                        if(row[cols[col][1]] == 0)
-                            row[cols[col][1]] = "-";
                         rowTD.append("<td colspan='"+cols[col][2]+"' class='"+tempRowClass+"' style='"+style+"'><p><span>"+row[cols[col][1]]+"</span></p></td><td><div style='width: 5px; height: 20px;'></div></td>");
                     }
                     rowTD.children().last().remove();
@@ -227,6 +227,8 @@
                     
                     if(data[i][0] != 1111)
                         totalTransactionsWOSS += data[i][1];
+                    else
+                        data[i][4] = "-";
                 }
 
                 for(i=0;i<data.length;i++)
