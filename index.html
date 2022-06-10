@@ -243,7 +243,7 @@
                 var storeSignupRate = fixPercent(signupTransactions / transactionCountWOSignups);
                 var storeNeededFive = Math.ceil(fixPercent(Math.max((transactionCountWOSignups*0.05) - signupTransactions,0))/100);
                 var storeNeededTen = Math.ceil(fixPercent(Math.max((transactionCountWOSignups*0.1) - signupTransactions,0))/100);
-                var transactionsForGoal = findRequiredTilGoal(totalTransactionsWOSS, loyaltyTransactions);
+                var transactionsForGoal = findRequiredTilGoal(totalTransactions, loyaltyTransactions);
 
                 var totals = ["Totals",totalTransactions,loyaltyTransactions, storePenetration, signupTransactions, storeSignupRate,storeNeededFive,storeNeededTen, transactionsForGoal];
 
