@@ -271,7 +271,7 @@
 
             function setToSunday(date) {
                 var day = date.getDay() || 7;  
-                if(day !== 1) 
+                if(day !== 0) 
                     date.setHours(-24 * day); 
                 return date;
             }
@@ -304,7 +304,7 @@
 
             $("#load_wtd").click(function() {
                 var date = setToSunday(new Date());
-                var startOfWeek = new Date(date.toISOString().split("T")[0]).getTime();
+                var startOfWeek = new Date(date.toISOString().split("T")[0]).getTime()+(1000*60*60*24);
                 var endOfWeek = startOfWeek + (604800 * 1000);
 
 
