@@ -49,11 +49,15 @@
                 if(associateRow[0] == associates[1111]) {
                     return 0;
                 }
-                var points = 0;
+                
+/*              var points = 0;
                 points += associateRow[8] * 0.2;
-                points += associateRow[7] * 2;
+                points += associateRow[7] * 2;*/
+                
+                var rewardsCountWOSignups = (associateRow[2]-associateRow[4]);
+                var points = ( (rewardsCountWOSignups / associateRow[1]) - (associateRow[4] / associateRow[1]) );
 
-/*                var penetrationImpact = (associateRow[1]*100) / totalTransactions;
+/*              var penetrationImpact = (associateRow[1]*100) / totalTransactions;
                 points += 100-(penetrationImpact * associateRow[3]);
 
 
