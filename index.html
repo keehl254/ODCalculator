@@ -77,7 +77,7 @@
                 $("#excel_table").html("<table cellpadding='0' cellspacing='0' border='0' bgcolor='white' style='border-collapse: collapse;width:600px'><tbody></tbody></table>");
 
                 if(totals == null)
-                    totals = ["Totals",0,0,0,0,0,0,0,0,""];
+                    totals = ["Totals",0,0,0,0,0,0,0,0,0];
 
                 var table = $("#excel_table");
                 var tbody = $(table).find("table tbody");
@@ -89,7 +89,7 @@
                 headerRow.children().last().remove();
                 tbody.prepend(headerRow);
 
-                var blankRow = ["<br><br>","","","","","","","",""];
+                var blankRow = ["<br><br>","","","","","","","","",""];
                 var totalIndex = Math.max(data.length,20);
                 for(var i=0;i<=totalIndex;i++) {
                     var row,rowClass;
