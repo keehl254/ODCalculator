@@ -253,6 +253,7 @@
                 var transactionsForGoal = findRequiredTilGoal(totalTransactions, loyaltyTransactions);
 
                 var totals = ["Totals",totalTransactions,loyaltyTransactions, storePenetration, signupTransactions, storeSignupRate,storeNeededFive,storeNeededTen, transactionsForGoal];
+                totals[9] = scoreAssociate(totals,totalTransactions);
 
                 var graphColor;
                 if(storePenetration < 55)
