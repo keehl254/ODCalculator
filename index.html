@@ -55,7 +55,7 @@
                 points += associateRow[7] * 2;*/
                 
                 var rewardsCountWOSignups = (associateRow[2]-associateRow[4]);
-                var points = ( (rewardsCountWOSignups / associateRow[1]) - (100-((associateRow[4] / associateRow[1]))*100) ) * 100;
+                var points = ( (rewardsCountWOSignups / associateRow[1]) - (1-(associateRow[4] / associateRow[1])) ) * 100;
                 points+=100;
 
 /*              var penetrationImpact = (associateRow[1]*100) / totalTransactions;
