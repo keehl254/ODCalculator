@@ -103,7 +103,7 @@
                 var tbody = $(table).find("table tbody");
 
                 var headerRow = $("<tr />");
-                var cols = [["Cashier",0,4,-1],["Score",9,1,55,60,3],["",-1,-1,-1],["Transactions",1,4,-1],["REW Transactions",2,1,-1],["",-1,1,-1],["Penetration",3,1,55,60], ["Needed for goal",8,1,-1],["",-1,1,-1], ["Signups",4,1,-1], ["Signup Rate",5,1,5,10], ["Needed for 5%",6,1,-1], ["Needed for 10%",7,1,-1]];
+                var cols = [["Cashier",0,4,-1],["Score",9,1,60,65],["",-1,-1,-1],["Transactions",1,4,-1],["REW Transactions",2,1,-1],["",-1,1,-1],["Penetration",3,1,55,60], ["Needed for goal",8,1,-1],["",-1,1,-1], ["Signups",4,1,-1], ["Signup Rate",5,1,5,10], ["Needed for 5%",6,1,-1], ["Needed for 10%",7,1,-1]];
                 for(var col of cols)
                     headerRow.append("<td colspan='"+col[2]+"' class='excel_td excel_header'><p><span>"+col[0]+"</span></p></td><td class='excel_td excel_header'></td>");
                 headerRow.children().last().remove();
@@ -134,16 +134,13 @@
                         if(cols[col][1] == -1) {
                             tempRowClass="";
                         } else if(cols[col][3] != -1 && i < data.length) {
-                            var index = col;
-                            if(cols.length > 5)
-                                index = cols[5];
-                            if(row[cols[index][1]] < cols[col][3])
+                            if(row[cols[col][1]] < cols[col][3])
                                 backgroundColor = 0;
-                            else if(row[cols[index][1]] < cols[col][4])
+                            else if(row[cols[col][1]] < cols[col][4])
                                 backgroundColor = 1;
                             else
                                 backgroundColor = 2;
-                            if(!(row[cols[index][1]] == "-" && row[0] == associates[1111]))
+                            if(!(row[cols[col][1]] == "-" && row[0] == associates[1111]))
                                 style = "background-color: "+graphColors[backgroundColor][0]+";";
                         }
                         rowTD.append("<td colspan='"+cols[col][2]+"' class='"+tempRowClass+"' style='"+style+"'><p><span>"+row[cols[col][1]]+"</span></p></td><td><div style='width: 5px; height: 20px;'></div></td>");
