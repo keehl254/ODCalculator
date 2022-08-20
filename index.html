@@ -72,6 +72,7 @@
                 
                 var rewardsCountWOSignups = (associateRow[2]-associateRow[4]);
                 var possibleSignups = associateRow[1] - rewardsCountWOSignups;
+                possibleSignups = Math.min(1,possibleSignups);
                 var points = ( (rewardsCountWOSignups / associateRow[1]) - (0.5-(associateRow[4] / possibleSignups)) ) * 100;
                 points+=50;
 
