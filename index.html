@@ -88,7 +88,7 @@
 
             function formatTable(data,totals) {
                 data = data.sort(function(associateOne, associateTwo) {
-                    return associateTwo[9] - associateOne[9];
+                    return (associateTwo[9]+100) - (associateOne[9]+100);
                 });
                 
                 if(totals != null && data[data.length-1][0] == associates[1111])
