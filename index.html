@@ -43,6 +43,52 @@
                 1034742: "1034742<br><as>(Dino)</as>",
                 1111: "Self Serve"
             }
+            
+            function setCookie(cname, cvalue, exdays) {
+                const d = new Date();
+                d.setTime(d.getTime() + (exdays*24*60*60*1000));
+                let expires = "expires="+ d.toUTCString();
+                document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+            }
+            
+            function getCookie(cname) {
+                let name = cname + "=";
+                let decodedCookie = decodeURIComponent(document.cookie);
+                let ca = decodedCookie.split(';');
+                for(let i = 0; i <ca.length; i++) {
+                    let c = ca[i];
+                    while (c.charAt(0) == ' ') {
+                        c = c.substring(1);
+                    }
+                    if (c.indexOf(name) == 0) {
+                        return c.substring(name.length, c.length);
+                    }
+                }
+                return "";
+            }
+            
+            function isNumeric(str) {
+                if (typeof str != "string") return false;
+                return !isNaN(str) && !isNaN(parseFloat(str));
+            }
+            
+            function getStoreNumber() {
+                var storeNumb = getCookie("storenumb");
+                if(storeNumb == "") {
+                    var complete = false;
+                    while(!complete) {
+                        let numb = prompt("Please enter your five digit store number!","06626");
+                        if(!isNumeric(numb) || numb.length != 5) {
+                            alert("Prompt entered was not numeric or is not the right length!");
+                            continue;
+                        }
+                        storeNumb = parseInt(numb);
+                        setCookie("storenumb", storeNumb,1);
+                        complete = true;
+                    }
+                }
+                return parseInt(storeNumb);
+            }
 
             function fixPercent(percent) {
                 return Math.round((percent + Number.EPSILON) * 10000) / 100
@@ -332,8 +378,10 @@
 
                 date.setHours(23,59,59,999);
                 var endOfDay = date.getTime();
+                
+                local storeNumb = getStoreNumber();
 
-                var url = "http://ods06626w10:7001/odpposservlet/ODOpenReport?report=odr&start_date="+startOfDay+"&end_date="+endOfDay+"&precision=2";
+                var url = "http://ods" + storeNumb + "w10:7001/odpposservlet/ODOpenReport?report=odr&start_date="+startOfDay+"&end_date="+endOfDay+"&precision=2";
                 window.open(url);
             });
 
@@ -342,9 +390,9 @@
                 var startOfWeek = new Date(date.toISOString().split("T")[0]).getTime()+(1000*60*60*24);
                 var endOfWeek = startOfWeek + (604800 * 1000);
 
-
-
-                var url = "http://ods06626w10:7001/odpposservlet/ODOpenReport?report=odr&start_date="+startOfWeek+"&end_date="+endOfWeek+"&precision=2";
+                local storeNumb = getStoreNumber();
+                
+                var url = "http://ods" + storeNumb + "w10:7001/odpposservlet/ODOpenReport?report=odr&start_date="+startOfWeek+"&end_date="+endOfWeek+"&precision=2";
                 window.open(url);
             });
 
@@ -356,8 +404,10 @@
 
                 date.setHours(23,59,59,999);
                 var endOfDay = date.getTime();
+                
+                local storeNumb = getStoreNumber();
 
-                var url = "http://ods06626w10:7001/odpposservlet/ODOpenReport?report=depts&start_date="+startOfDay+"&end_date="+endOfDay+"&DL=78&precision=2";
+                var url = "http://ods" + storeNumb + "w10:7001/odpposservlet/ODOpenReport?report=depts&start_date="+startOfDay+"&end_date="+endOfDay+"&DL=78&precision=2";
                 window.open(url);
             });
 
