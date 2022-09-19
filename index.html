@@ -379,7 +379,7 @@
                 date.setHours(23,59,59,999);
                 var endOfDay = date.getTime();
                 
-                local storeNumb = getStoreNumber();
+                var storeNumb = getStoreNumber();
 
                 var url = "http://ods" + storeNumb + "w10:7001/odpposservlet/ODOpenReport?report=odr&start_date="+startOfDay+"&end_date="+endOfDay+"&precision=2";
                 window.open(url);
@@ -390,7 +390,7 @@
                 var startOfWeek = new Date(date.toISOString().split("T")[0]).getTime()+(1000*60*60*24);
                 var endOfWeek = startOfWeek + (604800 * 1000);
 
-                local storeNumb = getStoreNumber();
+                var storeNumb = getStoreNumber();
                 
                 var url = "http://ods" + storeNumb + "w10:7001/odpposservlet/ODOpenReport?report=odr&start_date="+startOfWeek+"&end_date="+endOfWeek+"&precision=2";
                 window.open(url);
@@ -405,7 +405,7 @@
                 date.setHours(23,59,59,999);
                 var endOfDay = date.getTime();
                 
-                local storeNumb = getStoreNumber();
+                var storeNumb = getStoreNumber();
 
                 var url = "http://ods" + storeNumb + "w10:7001/odpposservlet/ODOpenReport?report=depts&start_date="+startOfDay+"&end_date="+endOfDay+"&DL=78&precision=2";
                 window.open(url);
