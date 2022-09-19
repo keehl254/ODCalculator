@@ -87,7 +87,10 @@
                         complete = true;
                     }
                 }
-                return parseInt(storeNumb);
+                storeNumb = parseInt(storeNumb);
+                if(storeNumb < 10000)
+                    storeNumb = "0" + storeNumb;
+                return storeNumb+"";
             }
 
             function fixPercent(percent) {
