@@ -304,7 +304,7 @@
                 
                 var containsSS = false;
                 for(i=0;i<data.length;i++)
-                    containsSS = containsSS || data[0] == associates[1111];
+                    containsSS = containsSS || data[i][0] == associates[1111];
                 
                 if(!containsSS)
                     data[data.length] = [associates[1111],0,0,0,0,0,0,0,0,0];
