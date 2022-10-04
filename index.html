@@ -95,7 +95,7 @@
             }
 
             function fixPercent(percent) {
-                return Math.round((percent + Number.EPSILON) * 10000) / 100
+                return Math.round((percent + Number.EPSILON) * 10000) / 100;
             }
 
             function findRequiredTilGoal(transactions, loyaltyTransactions) {
@@ -113,9 +113,9 @@
             }
 
             function scoreAssociate(totalTransactions, associateRow) {
-                if(associateRow[0] == associates[1111]) {
-                    return -100;
-                }
+                //if(associateRow[0] == associates[1111]) {
+                    //return -100;
+                //}
                 
 /*              var points = 0;
                 points += associateRow[8] * 0.2;
@@ -144,7 +144,7 @@
                 });
                 
                 if(totals != null && data[data.length-1][0] == associates[1111])
-                    data[data.length-1][9] = 0;
+                    //data[data.length-1][9] = 0;
                 else {
                     data[0] = [associates[1111],0,0,0,0,0,0,0,0,0];
                     if(totals == null)
