@@ -155,11 +155,13 @@
                     data[0] = [associates[1111],0,0,0,0,0,0,0,0,0];
                     totals = ["Totals",0,0,0,0,0,0,0,0,0];
                 } else {
-                    if(data[data.length-1][0] == associates[1111]) {
-                        data[data.length-1][5] = "-";
-                        data[data.length-1][6] = "-";
-                        data[data.length-1][7] = "-";
-                        data[data.length-1][8] = "-";
+                    for(var i=0;i<data.length;i++) {
+                        if(data[i][0] == associates[1111]) {
+                            data[i][5] = "-";
+                            data[i][6] = "-";
+                            data[i][7] = "-";
+                            data[i][8] = "-";
+                        }
                     }
                 }
                 
