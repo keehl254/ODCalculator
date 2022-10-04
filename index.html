@@ -154,6 +154,13 @@
                 if(totals == null) {
                     data[0] = [associates[1111],0,0,0,0,0,0,0,0,0];
                     totals = ["Totals",0,0,0,0,0,0,0,0,0];
+                } else {
+                    if(data[data.length-1][0] == associates[1111]) {
+                        data[data.length-1][5] = "-";
+                        data[data.length-1][6] = "-";
+                        data[data.length-1][7] = "-";
+                        data[data.length-1][8] = "-";
+                    }
                 }
                 
                 $("#excel_table").html("<table cellpadding='0' cellspacing='0' border='0' bgcolor='white' style='border-collapse: collapse;width:600px'><tbody></tbody></table>");
@@ -290,13 +297,6 @@
 
                     if(isNaN(associateRow[5]))
                         associateRow[5] = "-";
-                    
-                    if(associateRow[0] == 1111) {
-                        associateRow[5] = "-";
-                        associateRow[6] = "-";
-                        associateRow[7] = "-";
-                        associateRow[8] = "-";
-                    }
 
                     if(!isNaN(associateRow[0])) { // && associateRow[0] != 1111
                         var associateName = associates[associateRow[0]];
